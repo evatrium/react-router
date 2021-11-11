@@ -1,0 +1,45 @@
+{
+  "name": "@iosio/react-router",
+  "version": "1.0.0",
+  "description": "simple react router",
+  "type": "module",
+  "source": "src/index.js",
+  "exports": {
+    "require": "./lib/iosio-react-router.cjs",
+    "default": "./lib/iosio-react-router.modern.js"
+  },
+  "main": "./lib/iosio-react-router.cjs",
+  "module": "./lib/iosio-react-router.module.js",
+  "unpkg": "./lib/iosio-react-router.umd.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iosio/react-router.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src",
+    "lib"
+  ],
+  "keywords": [
+    "react router",
+    "simple routing",
+    "pushState navigation"
+  ],
+  "scripts": {
+    "start": "wmr",
+    "build": "microbundle --jsx React.createElement --define process.env.NODE_ENV=production",
+    "test": "exit 0"
+  },
+  "dependencies": {
+    "@iosio/util": "^2.0.13",
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "microbundle": "^0.14.1",
+    "preact": "^10.5.15",
+    "wmr": "^3.7.2"
+  }
+}

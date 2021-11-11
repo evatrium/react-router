@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>search-worker</title>
+    <meta name="description" content="wow much speed"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="icon" href="data:"/>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text: #afafbb
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            background: #1f2022;
+            color: var(--text);
+        }
+
+        body {
+            font: 16px/1.21 'Helvetica Neue', arial, sans-serif;
+            font-weight: 300;
+        }
+
+        a {
+            color: var(--text);
+            padding: 8px
+        }
+
+        button {
+            padding: 7px 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            font-weight: bold;
+        }
+
+        nav{
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+        }
+    </style>
+    <link rel="modulepreload" as="script" href="/index.js"/>
+</head>
+<body>
+<script type="module" src="/index.js"></script>
+</body>
+</html>
