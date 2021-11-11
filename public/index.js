@@ -74,6 +74,9 @@ const App = () => {
 
             <Router
                 pathMap={pathMap}
+                // when navigating to "/docs/nested"
+                // the "routeOnBasePath" prop tells this (parent) router to match the first segment of the pathname "/docs"
+                // then on the "/docs" page, the nested router will display the page "/docs/nested" route
                 routeOnBasePath
                 ContainerComponent={'main'}
                 ContainerProps={ContainerProps}/>
