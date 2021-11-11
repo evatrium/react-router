@@ -1,6 +1,6 @@
 # @iosio/react-router
 
-> Simple react-router. Mostly familiar api with a few opinionated twists.
+> Simple react-router.
 
 
 ### Installation
