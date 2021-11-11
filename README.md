@@ -71,8 +71,6 @@ previously visited path, else it will navigate to "/" or whatever is defined as 
 
 ##### props
 
-- **to** - String
-- **toParams** - Object - pass an object to be stringified into query parameters
 
 ```js
 // string
@@ -108,6 +106,6 @@ const AboutPageComponent = () => {
 
 ### License
 
-[MIT]: https://choosealicense.com/licenses/mit/
+[MIT](https://choosealicense.com/licenses/mit/)
 
 
