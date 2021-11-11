@@ -69,9 +69,6 @@ previously visited path, else it will navigate to "/" or whatever is defined as 
 
 ### navigate
 
-##### props
-
-
 ```js
 // string
 navigate('/path?id=1#foo');
