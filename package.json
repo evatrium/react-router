@@ -37,8 +37,8 @@
     "test": "exit 0"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "@iosio/util": "^2.0.15"
+    "@iosio/util": "^2.0.16",
+    "react": "^17.0.2"
   },
   "devDependencies": {
     "microbundle": "^0.14.1",
