@@ -30,14 +30,13 @@
   ],
   "scripts": {
     "start": "wmr",
-    "build": "microbundle --jsx React.createElement --define process.env.NODE_ENV=production",
+    "build": "microbundle --jsx React.createElement --external react,@iosio/util --define process.env.NODE_ENV=production",
     "test": "exit 0"
   },
-  "dependencies": {
-    "@iosio/util": "^2.0.14"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "@iosio/util": "^2.0.14"
   },
   "devDependencies": {
     "microbundle": "^0.14.1",
