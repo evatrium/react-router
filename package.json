@@ -4,16 +4,16 @@
   "description": "simple react router",
   "type": "module",
   "source": "src/index.js",
+  "main": "./lib/iosio-react-router.js",
+  "umd:main": "./lib/iosio-react-router.umd.js",
+  "module": "./lib/iosio-react-router.module.js",
+  "unpkg": "./lib/iosio-react-router.umd.js",
   "exports": {
     "browser": "./lib/iosio-react-router.module.js",
     "import": "./lib/iosio-react-router.mjs",
     "require": "./lib/iosio-react-router.cjs",
     "default": "./lib/iosio-react-router.modern.js"
   },
-  "umd:main": "./lib/iosio-react-router.umd.js",
-  "main": "./lib/iosio-react-router.js",
-  "module": "./lib/iosio-react-router.module.js",
-  "unpkg": "./lib/iosio-react-router.umd.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/iosio/react-router.git"
@@ -33,13 +33,12 @@
   ],
   "scripts": {
     "start": "wmr",
-    "build": "microbundle --jsx React.createElement --external react,@iosio/util --define process.env.NODE_ENV=production",
+    "build": "microbundle --jsx React.createElement --define process.env.NODE_ENV=production",
     "test": "exit 0"
   },
-  "dependencies": {},
   "peerDependencies": {
     "react": "^17.0.2",
-    "@iosio/util": "^2.0.14"
+    "@iosio/util": "^2.0.15"
   },
   "devDependencies": {
     "microbundle": "^0.14.1",

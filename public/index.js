@@ -8,52 +8,41 @@ import {memo} from "preact/compat";
 
 const HomePageComponent = () => <h1>Home</h1>;
 
-const AboutPageComponent = () => {
+const AboutPageComponent = () => (
+    <div>
+        <h1>About</h1>
+        <Linkage
+            to={'/about?foo=bar'}
+            // experimental prop on ActiveLinkage
+            activate={'query'}
+        >
+            Foo Bar
+        </Linkage>
+        <Linkage
+            to={'/about'}
+            toParams={{baz: 'bing'}}
+            // experimental prop on ActiveLinkage
+            activate={'params'}
+        >
+            Baz Bing
+        </Linkage>
 
-    return (
-        <div>
-            <h1>About</h1>
-            <Linkage
-                to={'/about?foo=bar'}
-                // experimental prop on ActiveLinkage
-                activate={'query'}
-            >
-                Foo Bar
-            </Linkage>
-            <Linkage
-                to={'/about'}
-                toParams={{baz: 'bing'}}
-                // experimental prop on ActiveLinkage
-                activate={'params'}
-            >
-                Baz Bing
-            </Linkage>
+        <button onClick={() => {
+            navigate(currentState => ({
+                // params: previousState.params,
+                ...currentState,
+                pathname: '/docs',
+                hash: 'exampleOfPersistingPartOfPreviousState'
+            }));
+        }}>
+            Programmatically navigate to Docs
+        </button>
+    </div>
+);
 
-            <button onClick={() => {
-                navigate(currentState => ({
-                    // params: previousState.params,
-                    ...currentState,
-                    pathname: '/docs',
-                    hash: 'exampleOfPersistingPartOfPreviousState'
-                }));
-            }}>
-                Programmatically navigate to Docs
-            </button>
-        </div>
-    )
-};
-
-const nestedPathMap = {
-    '/docs/nested': () => <h2>Nested!!!</h2>
-}
-
+const nestedPathMap = {'/docs/nested': () => <h2>Nested!!!</h2>}
 const DocsPageComponent = () => {
-
-    const {Route} = useRouter({
-        nested: true,
-        pathMap: nestedPathMap
-    });
-
+    const {Route} = useRouter({nested: true, pathMap: nestedPathMap});
     return (
         <>
             <h1>Docs</h1>
@@ -66,46 +55,28 @@ const DocsPageComponent = () => {
 }
 
 
+const pathMap = {
+    '/': {title: 'Iosio React Router', Route: HomePageComponent},
+    '/about': {title: 'about', Route: AboutPageComponent},
+    '/aboutmore': {title: 'about (test)', Route: () => <h1>More about (test)</h1>},
+    '/docs': {title: 'docs', Route: DocsPageComponent},
+    '/docsmore': {title: 'more docs (test)', Route: () => <h1>More docs (test)</h1>},
+    '/coco': {title: 'coco', Route: () => <h1>Coco</h1>},
+    '/coconut': {title: 'coconut', Route: () => <h1>Coconut</h1>},
+}
+
 
 const NavBar = memo(() => {
     return (
         <nav>
-            <Linkage
-                to={'/'}>
-                <b>React Router</b>
-            </Linkage>
-
-            <Linkage
-                to={'/about'}>
-                About
-            </Linkage>
-
-            <Linkage
-                to={'/aboutmore'}>
-                More About (test)
-            </Linkage>
-
-            <Linkage
-                activate={'basePath'} //this prop is experimental on ActiveLinkage
-                to={'/docs'}>
-                Docs
-            </Linkage>
-
-            <Linkage
-                to={'/docsmore'}>
-                More Docs (test)
-            </Linkage>
-
-            <Linkage
-                to={'/coco'}>
-                Coco
-            </Linkage>
-
-            <Linkage
-                to={'/coconut'}>
-                Coconut
-            </Linkage>
-
+            {Object.keys(pathMap).map((key) => {
+                const {title} = pathMap[key]
+                return (
+                    <Linkage to={key} activate={'basePath'} key={key}>
+                        {key === '/' ? <b>{title}</b> : title}
+                    </Linkage>
+                )
+            })}
             <Linkage to={'/invalid'}>
                 invalid url
             </Linkage>
@@ -113,15 +84,6 @@ const NavBar = memo(() => {
     )
 });
 
-const pathMap = {
-    '/': {title: 'home', Route: HomePageComponent},
-    '/about': {title: 'about', Route: AboutPageComponent},
-    '/aboutmore': {title: 'about', Route: () => <h1>More about (test)</h1>},
-    '/docs': {title: 'docs', Route: DocsPageComponent},
-    '/docsmore': {title: 'more docs', Route: () => <h1>More docs (test)</h1>},
-    '/coco': {title: 'coco', Route: () => <h1>Coco</h1>},
-    '/coconut': {title: 'coconut', Route: () => <h1>Coconut</h1>},
-}
 
 const App = () => {
 
