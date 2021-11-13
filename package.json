@@ -5,10 +5,13 @@
   "type": "module",
   "source": "src/index.js",
   "exports": {
+    "browser": "./lib/iosio-react-router.module.js",
+    "import": "./lib/iosio-react-router.mjs",
     "require": "./lib/iosio-react-router.cjs",
     "default": "./lib/iosio-react-router.modern.js"
   },
-  "main": "./lib/iosio-react-router.cjs",
+  "umd:main": "./lib/iosio-react-router.umd.js",
+  "main": "./lib/iosio-react-router.js",
   "module": "./lib/iosio-react-router.module.js",
   "unpkg": "./lib/iosio-react-router.umd.js",
   "repository": {
