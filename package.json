@@ -34,7 +34,9 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "@iosio/util": "^2.0.14",
+    "@iosio/util": "^2.0.14"
+  },
+  "peerDependencies": {
     "react": "^17.0.2"
   },
   "devDependencies": {
