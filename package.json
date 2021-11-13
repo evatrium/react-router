@@ -1,6 +1,6 @@
 {
   "name": "@iosio/react-router",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "simple react router",
   "type": "module",
   "source": "src/index.js",
