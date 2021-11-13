@@ -1,5 +1,5 @@
-import {useState, useEffect, useMemo, memo, forwardRef, useRef, useCallback} from 'react';
-import {getParams, stringifyParams, url, isObj, isFunc, isString} from '@iosio/util';
+import {useState, useEffect, useMemo, forwardRef, useRef, useCallback} from 'react';
+import {getParams, stringifyParams, url, isObj, isFunc, isString, propsChanged} from '@iosio/util';
 
 export {getParams, stringifyParams, url}
 
@@ -45,9 +45,7 @@ const syncState = (state = getCurrentState()) => {
 const onPopSyncState = () => syncState();
 
 export const navigate = (newPath, replace) => {
-    let path = '/',
-        nextState = {},
-        currentState = getCurrentState(),
+    let path = '/', nextState = parsePath(path), currentState = getCurrentState(),
         str = isString(newPath), obj = isObj(newPath), func = isFunc(newPath);
     if (str) {
         path = newPath;
@@ -60,7 +58,7 @@ export const navigate = (newPath, replace) => {
         nextState = {pathname, query, hash, params: params || {}, path};
     }
     if (currentState.path !== path) {
-        window.history[`${replace ? 'replace' : 'push'}State`](null, document.title, path);
+        window.history[`${replace ? 'replace' : 'push'}State`](null, '', path);
         syncState(nextState);
     }
 };
@@ -115,15 +113,13 @@ function delegateLinkHandler(e) {
         if (String(t.nodeName).toUpperCase() === 'A' && t.getAttribute('href')) {
             if (t.hasAttribute('data-native') || t.hasAttribute('native')) return;
             // if link is handled by the router, prevent browser defaults
-            if (routeFromLink(t)) {
-                return prevent(e);
-            }
+            if (routeFromLink(t)) return prevent(e);
         }
     } while ((t = t.parentNode));
 }
 
-
 let eventListenersInitialized = false;
+
 function initEventListeners() {
     if (eventListenersInitialized) return;
     eventListenersInitialized = true;
@@ -134,44 +130,20 @@ function initEventListeners() {
 }
 
 
-const RouterContainer = forwardRef(({Container = 'main', Route, ...rest}, ref) => (
-    <Container {...rest} ref={ref}>
-        {Route && <Route/>}
-    </Container>
-));
-const RouterContainerMemoized = memo(RouterContainer);
-
-
+const EMPTY_OBJECT = {};
 const EmptyRout = () => null;
 const _getPathForPathMap = pathname => pathname;
 const _getRoute = (path, pathMap) => isFunc(pathMap[path]) ? pathMap[path] : pathMap[path]?.Route;
 const _getTitle = (path, pathMap) => pathMap[path]?.title || '';
 const _getBasePath = path => `/${path.split('/')[1]}`;
 
-export const Router = (
-    {
-        pathMap,
-        routeOnBasePath,
-        getPathForPathMap = routeOnBasePath ? _getBasePath : _getPathForPathMap,
-        getRoute = _getRoute,
-        getTitle = _getTitle,
-        fallbackPath = '/',
-        ContainerComponent = 'main',
-        ContainerProps,
-        NotFound = EmptyRout,
-        nested
-    }) => {
+const _determineRoute =
+    ({
+         nested, pathMap, getPathForPathMap,
+         pathname, lastPathname, lastUrl, fallbackPath,
+         navigate, getRoute, getTitle, NotFound
+     } = {}) => {
 
-    useEffect(initEventListeners, []);
-
-    const pageRef = useRef(null);
-    let [loc, navigate] = useLocation();
-    let {pathname, path} = loc;
-    const {current: lastUrl} = usePrevious(path);
-    const {current: lastPathname} = usePrevious(pathname);
-
-
-    const {Route, title} = useMemo(() => {
         if (!nested && !pathMap[getPathForPathMap(pathname)]) {
             let replaceHistoryWith;
             if ((pathname !== lastPathname) && pathMap[getPathForPathMap(lastPathname)]) {
@@ -183,41 +155,127 @@ export const Router = (
             }
             navigate(replaceHistoryWith, true);
         }
-        return {
-            Route: getRoute(getPathForPathMap(pathname), pathMap || {}) || NotFound,
-            title: getTitle(getPathForPathMap(pathname), pathMap || {}) || ''
-        }
-    }, [pathname, pathMap])
+
+        const Route = getRoute(getPathForPathMap(pathname), pathMap) || NotFound;
+        const title = getTitle(getPathForPathMap(pathname), pathMap) || '';
+
+        return {Route, title}
+    };
+
+export const useRouter =
+    ({
+         pathMap = EMPTY_OBJECT,
+         routeOnBasePath,
+         getPathForPathMap = routeOnBasePath ? _getBasePath : _getPathForPathMap,
+         nested,
+         getRoute = _getRoute,
+         getTitle = _getTitle,
+         NotFound = EmptyRout,
+         fallbackPath = '/',
+         determineRoute = _determineRoute
+     } = {}) => {
+
+        useEffect(initEventListeners, []);
+
+        let [state, navigate] = useLocation();
+        let {pathname, path} = state;
+
+        const {current: lastUrl} = usePrevious(path);
+        const {current: lastPathname} = usePrevious(pathname);
 
 
-    useMemo(() => {
-        title && (window.document.title = title);
-    }, [title]);
-
-    return (
-        <RouterContainerMemoized
-            ref={pageRef}
-            Route={Route}
-            Container={ContainerComponent}
-            {...ContainerProps}/>
-    );
-};
+        const {Route, title} = useMemo(() => determineRoute({
+            nested, pathMap, getPathForPathMap, pathname, lastPathname,
+            lastUrl, fallbackPath, navigate, getRoute, getTitle, NotFound
+        }), [pathname, pathMap]);
 
 
+        useMemo(() => {
+            title && (window.document.title = title);
+        }, [title]);
 
-export const Linkage = forwardRef(({onClick, to, toParams, ...props}, ref) => {
+        return {Route, state, lastUrl, lastPathname, title, navigate}
+    }
 
-    const handleClick = useCallback((e) => {
-        onClick && onClick(e);
-        handleLinkClick(e);
-    }, [onClick]);
-
+export const useHrefLink = ({to, toParams} = {}) => {
     const href = useMemo(() => {
         toParams = (isFunc(toParams) ? toParams(getParams()) : toParams) || '';
         return url`${to}${toParams}`
     }, [to, toParams]);
 
+    return {href, onClick: handleLinkClick}
+}
+
+export const useIsLinkActive = (href, {activate = 'pathname', isActive} = {}) => {
+
+    const [activatePathname, activateQuery, activateHash, exact, basePath] = useMemo(() => {
+        if (activate === 'pathname') return [true];
+        const parts = activate.split(',').map(x => x.trim());
+        const exactPathname = parts.includes('exactPathname');
+        const basePath = parts.includes('basePath');
+        return [
+            parts.includes('pathname') || exactPathname || basePath,
+            parts.includes('query') || parts.includes('params'),
+            parts.includes('hash'),
+            exactPathname,
+            basePath
+        ];
+    }, [activate]);
+
+    const [state] = useLocation();
+
+    const dif = `${activatePathname ? state.pathname : ''}` +
+        `${activateQuery ? state.query : ''}` +
+        `${activateHash ? state.hash : ''}`
+
+    return useMemo(() => {
+        const hrefParts = parsePath(href);
+        if (isFunc(isActive)) return isActive(state, hrefParts);
+        const {pathname, params, hash} = hrefParts
+        let pathMatch;
+        if (activatePathname) {
+            const p = basePath ? `/${state.pathname.split('/')[1]}` : state.pathname;
+            if (exact || pathname === '/') pathMatch = pathname === p
+            else pathMatch = pathname.startsWith(p) && p.startsWith(pathname);
+        }
+
+        return [
+            activatePathname && pathMatch,
+            activateQuery && !propsChanged(params, state.params),
+            activateHash && (hash === state.hash)
+        ].some(Boolean);
+
+    }, [href, dif]);
+}
+
+export const Linkage = forwardRef(({to, toParams, onClick, ...rest}, ref) => {
+    const {href, onClick: linkClick} = useHrefLink({to, toParams});
+    const handleClick = useCallback((e) => {
+        onClick && onClick(e)
+        linkClick(e);
+    }, [onClick]);
     return (
-        <a href={href} onClick={handleClick} ref={ref} {...props}/>
+        <a ref={ref} href={href} onClick={handleClick} {...rest} />
     )
-})
+});
+
+export const ActiveLinkage = forwardRef(
+    ({
+         to, toParams,
+         isActive, activate, activatedClassName = 'active',
+         className, onClick,
+         ...rest
+     }, ref) => {
+        const {href, onClick: linkClick} = useHrefLink({to, toParams});
+        const isActivated = useIsLinkActive(href, {activate, isActive});
+        const handleClick = useCallback((e) => {
+            onClick && onClick(e)
+            linkClick(e);
+        }, [onClick]);
+        return (
+            <a ref={ref} href={href} onClick={handleClick}
+               className={`${isActivated ? activatedClassName : ''}${className || ''}`}
+               {...rest}
+            />
+        )
+    });
