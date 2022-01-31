@@ -261,9 +261,9 @@ export const Linkage = forwardRef(({to, toParams, onClick, ...rest}, ref) => {
 
 export const ActiveLinkage = forwardRef(
     ({
-         to, toParams,
+         to, toParams, onClick,
          isActive, activate, activatedClassName = 'active',
-         className, onClick,
+         className,
          ...rest
      }, ref) => {
         const {href, onClick: linkClick} = useHrefLink({to, toParams});

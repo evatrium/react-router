@@ -4,16 +4,9 @@
   "description": "simple react router",
   "type": "module",
   "source": "src/index.js",
-  "main": "./lib/iosio-react-router.js",
-  "umd:main": "./lib/iosio-react-router.umd.js",
-  "module": "./lib/iosio-react-router.module.js",
-  "unpkg": "./lib/iosio-react-router.umd.js",
-  "exports": {
-    "browser": "./lib/iosio-react-router.module.js",
-    "import": "./lib/iosio-react-router.mjs",
-    "require": "./lib/iosio-react-router.cjs",
-    "default": "./lib/iosio-react-router.modern.js"
-  },
+  "module": "./dist/iosio-router.module.js",
+  "main": "./dist/iosio-router.umd.js",
+  "exports": "./dist/iosio-router.modern.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/iosio/react-router.git"
@@ -24,7 +17,7 @@
   },
   "files": [
     "src",
-    "lib"
+    "dist"
   ],
   "keywords": [
     "react router",
@@ -33,16 +26,19 @@
   ],
   "scripts": {
     "start": "wmr",
-    "build": "microbundle --jsx React.createElement --define process.env.NODE_ENV=production",
-    "test": "exit 0"
+    "build": "microbundle src/index.js --jsx React.createElement --sourcemap false --no-compress --define process.env.NODE_ENV=production --name iosioRouter",
+    "test": "exit 0",
+    "iosio": "npm uninstall @iosio/util && npm install @iosio/util"
   },
   "peerDependencies": {
-    "@iosio/util": "^2.0.16",
     "react": "^17.0.2"
   },
   "devDependencies": {
     "microbundle": "^0.14.1",
     "preact": "^10.5.15",
     "wmr": "^3.7.2"
+  },
+  "dependencies": {
+    "@iosio/util": "^2.0.51"
   }
 }
