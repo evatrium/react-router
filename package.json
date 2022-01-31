@@ -4,9 +4,7 @@
   "description": "simple react router",
   "type": "module",
   "source": "src/index.js",
-  "module": "./dist/iosio-router.module.js",
-  "main": "./dist/iosio-router.umd.js",
-  "exports": "./dist/iosio-router.modern.js",
+  "main": "dist/iosio-router.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/iosio/react-router.git"
@@ -26,7 +24,7 @@
   ],
   "scripts": {
     "start": "wmr",
-    "build": "microbundle src/index.js --jsx React.createElement --sourcemap false --no-compress --define process.env.NODE_ENV=production --name iosioRouter",
+    "build": "microbundle src/index.js -o dist/iosio-router.js --jsx React.createElement --no-pkg-main -f modern --sourcemap false --no-compress --define process.env.NODE_ENV=production --name iosioRouter",
     "test": "exit 0",
     "iosio": "npm uninstall @iosio/util && npm install @iosio/util"
   },
