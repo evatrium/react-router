@@ -7,7 +7,7 @@
   "main": "dist/iosio-router.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iosio/react-router.git"
+    "url": "https://github.com/evatrium/react-router.git"
   },
   "license": "MIT",
   "publishConfig": {
