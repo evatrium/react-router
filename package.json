@@ -28,12 +28,10 @@
     "test": "exit 0",
     "iosio": "npm uninstall @iosio/util && npm install @iosio/util"
   },
-  "peerDependencies": {
-    "react": "^17.0.2"
-  },
   "devDependencies": {
     "microbundle": "^0.14.1",
     "preact": "^10.5.15",
+    "react": "^18.2.0",
     "wmr": "^3.7.2"
   },
   "dependencies": {
